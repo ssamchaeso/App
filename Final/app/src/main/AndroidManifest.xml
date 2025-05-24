@@ -16,6 +16,7 @@
 
     <!-- 게임 화면 -->
     <activity android:name=".MainActivity" />
+        <activity android:name=".MenuActivity" />
 
     <!-- 타이틀 화면 (시작 액티비티) -->
     <activity

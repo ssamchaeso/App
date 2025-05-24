@@ -23,7 +23,7 @@ public class TitleActivity extends AppCompatActivity {
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     // 터치되면 게임 화면으로 전환
-                    Intent intent = new Intent(TitleActivity.this, MainActivity.class);
+                    Intent intent = new Intent(TitleActivity.this,MainActivity.class);
                     startActivity(intent);
                     finish(); // 타이틀 화면 종료
                     return true;

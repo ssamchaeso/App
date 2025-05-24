@@ -1,16 +1,25 @@
 package com.example.myapplication;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
@@ -22,10 +31,14 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isPaused=false;
 
+    private AlertDialog waitingDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
 
         for (int i = 0; i < 9; i++) {
             String buttonID = "button" + i;
@@ -34,8 +47,24 @@ public class MainActivity extends AppCompatActivity {
             int finalI = i;
             buttons[i].setOnClickListener(v -> handleMove(finalI));
         }
-        ImageButton pauseButton = findViewById(R.id.pauseButton);
-        pauseButton.setOnClickListener(v -> showPauseDialog());
+    }
+
+
+    private void dismissWaitingDialog() {
+        if (waitingDialog != null && waitingDialog.isShowing()) {
+            waitingDialog.dismiss();
+            waitingDialog = null;
+        }
+    }
+    private void showWaitingDialog(){
+        if (waitingDialog == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("대기 중");
+            builder.setMessage("상대 플레이어를 기다리는 중입니다...");
+            builder.setCancelable(false);
+            waitingDialog = builder.create();
+            waitingDialog.show();
+        }
     }
 
     private void handleMove(int index) {
