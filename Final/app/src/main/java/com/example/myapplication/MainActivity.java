@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
@@ -47,25 +48,12 @@ public class MainActivity extends AppCompatActivity {
             int finalI = i;
             buttons[i].setOnClickListener(v -> handleMove(finalI));
         }
+        ImageButton pauseButton = findViewById(R.id.pauseButton);
+        pauseButton.setOnClickListener(v -> showPauseDialog());
     }
 
 
-    private void dismissWaitingDialog() {
-        if (waitingDialog != null && waitingDialog.isShowing()) {
-            waitingDialog.dismiss();
-            waitingDialog = null;
-        }
-    }
-    private void showWaitingDialog(){
-        if (waitingDialog == null) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("대기 중");
-            builder.setMessage("상대 플레이어를 기다리는 중입니다...");
-            builder.setCancelable(false);
-            waitingDialog = builder.create();
-            waitingDialog.show();
-        }
-    }
+
 
     private void handleMove(int index) {
         // 일시정지 상태이거나 이미 눌린 칸이면 무시
@@ -161,14 +149,18 @@ public class MainActivity extends AppCompatActivity {
 
         Button btnResume = dialog.findViewById(R.id.btn_resume); // 올바른 ID
         Button btnExit = dialog.findViewById(R.id.btn_exit2);     // 올바른 ID
-
+        Button btnReturn =dialog.findViewById(R.id.btn_return);
         btnResume.setOnClickListener(v -> {
             isPaused = false;
             dialog.dismiss();
         });
 
         btnExit.setOnClickListener(v -> finish());
-
+        btnReturn.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, MenuActivity.class);
+            startActivity(intent);
+            finish();
+        });
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }

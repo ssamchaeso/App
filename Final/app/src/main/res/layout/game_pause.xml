@@ -23,9 +23,16 @@
         android:text="게임 재개" />
 
     <Button
+        android:id="@+id/btn_return"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="메인메뉴로 돌아가기" />
+
+    <Button
         android:id="@+id/btn_exit2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="종료"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="12dp"
+        android:text="종료" />
+
 </LinearLayout>

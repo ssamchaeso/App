@@ -26,15 +26,15 @@
         tools:layout_editor_absoluteY="265dp">
 
         <Button
-            android:id="@+id/btn_make_room"
+            android:id="@+id/btn_gameStart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="방 만들기" />
+            android:text="게임 시작" />
 
         <Button
-            android:id="@+id/btn_join_room"
+            android:id="@+id/btn_custom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="방 참가하기" />
+            android:text="커스터마이징" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
