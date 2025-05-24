@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="TicTacToeButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_width">100dp</item>
+        <item name="android:layout_height">100dp</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:textColor">#333333</item>
+        <item name="android:backgroundTint">#FFF9C4</item> <!-- 연노랑 -->
+        <item name="cornerRadius">16dp</item> <!-- 둥글게 -->
+        <item name="elevation">4dp</item> <!-- 그림자 효과 -->
+        <item name="android:layout_margin">6dp</item> <!-- 버튼 간 간격 -->
+    </style>
+
+
+
+    <!-- Base application theme. -->
+        <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+            <!-- Customize your theme here. -->
+            <item name="colorPrimary">@color/white</item>
+            <item name="colorPrimaryVariant">@color/white</item>
+            <item name="colorOnPrimary">@color/white</item>
+            <item name="colorSecondary">@color/white</item>
+        </style>
+
+</resources>
