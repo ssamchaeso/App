@@ -36,5 +36,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="커스터마이징" />
+
+        <Button
+            android:id="@+id/btn_record"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="대전기록" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
