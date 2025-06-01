@@ -1,22 +1,19 @@
 package com.example.myapplication;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 
 import androidx.appcompat.app.AppCompatActivity;
-
-
 
 import java.util.Arrays;
 
@@ -25,18 +22,22 @@ public class MainActivity extends AppCompatActivity {
     Button[] buttons = new Button[9];
     boolean playerX = true; // true: X, false: O
     int[] board = new int[9]; // 0: empty, 1: X, 2: O
+    private Dialog resultDialog;
+    boolean isPaused = false;
 
-    boolean isPaused=false;
-
+    int player1Icon;  // 전역변수로 선언
+    int player2Icon;  // 전역변수로 선언
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        int player1Icon = getIntent().getIntExtra("player1Icon", R.drawable.icon1);
-        int player2Icon = getIntent().getIntExtra("player2Icon", R.drawable.icon2);
-
+        // CustomizeActivity에서 리소스값 받아오기
+        String player1Name = getIntent().getStringExtra("player1Name");
+        String player2Name = getIntent().getStringExtra("player2Name");
+        player1Icon = getIntent().getIntExtra("player1Icon", R.drawable.icon1);
+        player2Icon = getIntent().getIntExtra("player2Icon", R.drawable.icon2);
 
         for (int i = 0; i < 9; i++) {
             String buttonID = "button" + i;
@@ -45,45 +46,32 @@ public class MainActivity extends AppCompatActivity {
             int finalI = i;
             buttons[i].setOnClickListener(v -> handleMove(finalI));
         }
+
         ImageButton pauseButton = findViewById(R.id.pauseButton);
         pauseButton.setOnClickListener(v -> showPauseDialog());
     }
 
-
-
-
     private void handleMove(int index) {
-        // 일시정지 상태이거나 이미 눌린 칸이면 무시
         if (isPaused || board[index] != 0) return;
 
-        // 클릭 사운드 재생
         MediaPlayer.create(this, R.raw.click).start();
 
-        // 보드 상태 갱신
         board[index] = playerX ? 1 : 2;
 
-        // 버튼에 X 또는 O 표시
-        buttons[index].setText(playerX ? "" : "O");
+        // 아이콘으로 표시 (텍스트 지우기)
+        buttons[index].setBackgroundResource(playerX ? player1Icon : player2Icon);
+        buttons[index].setText("");
 
-        // 색상 설정: X - 코랄핑크, O - 민트색
-        buttons[index].setTextColor(Color.parseColor(playerX ? "#FF8A80" : "#4DD0E1"));
-
-        // 승리 판단
         if (checkWin()) {
-            MediaPlayer.create(this, R.raw.win).start();  // 승리 사운드
-            showResultDialog((playerX ? "X" : "O") + " Wins!");
-        }
-        // 무승부 판단
-        else if (isDraw()) {
-            MediaPlayer.create(this, R.raw.draw).start(); // 무승부 사운드
-            showResultDialog("Draw!");
-        }
-        // 다음 턴으로 전환
-        else {
+            MediaPlayer.create(this, R.raw.win).start();
+            showResultDialog(playerX ? 1 : 2);  // playerX면 Player1 승리
+        } else if (isDraw()) {
+            MediaPlayer.create(this, R.raw.draw).start();
+            showResultDialog(0);  // 0은 무승부
+        } else {
             playerX = !playerX;
         }
     }
-
 
     private boolean checkWin() {
         int[][] winPositions = {
@@ -112,54 +100,102 @@ public class MainActivity extends AppCompatActivity {
         Arrays.fill(board, 0);
         for (Button b : buttons) {
             b.setText("");
+            b.setBackgroundResource(0);  // 배경 제거(아이콘 초기화)
         }
         playerX = true;
     }
 
-    private void showResultDialog(String message) {
+    private void showResultDialog(int winnerPlayer) {
+        if (isFinishing()) return;
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.game_result);
         dialog.setCancelable(false);
 
-        TextView textResult = dialog.findViewById(R.id.text_result);
+
+        TextView textResult =dialog.findViewById(R.id.text_result);
+        ImageView imageResult = dialog.findViewById(R.id.image_result);
         Button btnRestart = dialog.findViewById(R.id.btn_restart);
         Button btnExit = dialog.findViewById(R.id.btn_exit);
 
-        textResult.setText(message);
+
+
+        String player1Name = getIntent().getStringExtra("player1Name");
+        String player2Name = getIntent().getStringExtra("player2Name");
+
+        DBHelper dbHelper = new DBHelper(this);
+        if (winnerPlayer == 1) {
+            dbHelper.insertMatch(player1Name, "Win", player2Name, "Lose");
+            imageResult.setImageResource(player1Icon);
+        } else if (winnerPlayer == 2) {
+            dbHelper.insertMatch(player1Name, "Lose", player2Name, "Win");
+            imageResult.setImageResource(player2Icon);
+        } else {
+            dbHelper.insertMatch(player1Name, "Draw", player2Name, "Draw");
+            imageResult.setImageResource(R.drawable.draw_icon);
+            textResult.setVisibility(TextView.GONE);
+        }
 
         btnRestart.setOnClickListener(v -> {
             resetGame();
             dialog.dismiss();
         });
 
-        btnExit.setOnClickListener(v -> finish());
-
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        dialog.show();
+        btnExit.setOnClickListener(v -> {
+                resultDialog.dismiss();
+                finish();
+                });
+        resultDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        resultDialog.show();
     }
+    private void saveMatchResult(String p1Name, String p1Result, String p2Name, String p2Result) {
+        DBHelper dbHelper = new DBHelper(this);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put("player1", p1Name);
+        values.put("player1Result", p1Result);
+        values.put("player2", p2Name);
+        values.put("player2Result", p2Result);
+
+        db.insert("match_records", null, values);
+        db.close();
+    }
+
+
     private void showPauseDialog() {
         isPaused = true;
 
         Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.game_pause); // XML 파일 존재해야 함
+        dialog.setContentView(R.layout.game_pause);
         dialog.setCancelable(false);
 
-        Button btnResume = dialog.findViewById(R.id.btn_resume); // 올바른 ID
-        Button btnExit = dialog.findViewById(R.id.btn_exit2);     // 올바른 ID
-        Button btnReturn =dialog.findViewById(R.id.btn_return);
+        Button btnResume = dialog.findViewById(R.id.btn_resume);
+        Button btnExit = dialog.findViewById(R.id.btn_exit2);
+        Button btnReturn = dialog.findViewById(R.id.btn_return);
+
         btnResume.setOnClickListener(v -> {
             isPaused = false;
             dialog.dismiss();
         });
 
-        btnExit.setOnClickListener(v -> finish());
+        btnExit.setOnClickListener(v -> {
+            dialog.dismiss(); // 먼저 dialog 닫기
+            finish();         // 그 다음 activity 종료
+        });
         btnReturn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, MenuActivity.class);
             startActivity(intent);
             finish();
         });
+
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
     }
-
+    @Override
+    protected void onDestroy() {
+        if (resultDialog != null && resultDialog.isShowing()) {
+            resultDialog.dismiss();
+        }
+        super.onDestroy();
+    }
 }

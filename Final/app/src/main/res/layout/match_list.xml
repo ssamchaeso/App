@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:background="@drawable/match_background"
+    android:orientation="vertical"
+    android:padding="8dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="12dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/player1Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player1"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:paddingEnd="8dp" />
+
+        <TextView
+            android:id="@+id/player1Result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Win"
+            android:textSize="14sp"
+            android:textColor="#4CAF50"
+            android:paddingEnd="8dp" />
+
+        <TextView
+            android:id="@+id/vs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="VS"
+            android:textSize="14sp"
+            android:paddingEnd="8dp" />
+
+        <TextView
+            android:id="@+id/player2Result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lose"
+            android:textSize="14sp"
+            android:textColor="#F44336"
+            android:paddingEnd="8dp" />
+
+        <TextView
+            android:id="@+id/player2Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Player2"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</LinearLayout>

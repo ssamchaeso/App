@@ -1,46 +1,44 @@
 package com.example.myapplication;
 
+
+
+
+
 import android.database.Cursor;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ListView;
+
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
-public class RecordActivity extends AppCompatActivity {
+import java.util.ArrayList;
 
-    TextView txtHistory;
-    Button btnBack;
+public class RecordActivity extends AppCompatActivity {
+    private ListView listView;
+    private MatchAdapter adapter;
+    private ArrayList<Match> matchList = new ArrayList<Match>();
+    private DBHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_record);  // XML 이름에 맞게 수정
+        setContentView(R.layout.activity_record);
 
-        // XML 요소 연결
-        txtHistory = findViewById(R.id.txt_history);
-        btnBack = findViewById(R.id.btn_history_back);
+        listView = findViewById(R.id.matchListView);
+        dbHelper = new DBHelper(this);
+        matchList = new ArrayList<Match>();
 
-        // DB에서 기록 가져오기
-        DBHelper dbHelper = new DBHelper(this);
-        Cursor cursor = dbHelper.getAllHistory();
+        loadData();
+        adapter = new MatchAdapter(this, matchList);
+        listView.setAdapter(adapter);
+    }
 
-        StringBuilder resultText = new StringBuilder();
-        while (cursor.moveToNext()) {
-            String name = cursor.getString(1);        // playerName
-            String character = cursor.getString(2);   // character
-            String result = cursor.getString(3);      // result
-            String dateTime = cursor.getString(4);    // dateTime
+    private void loadData() {
+        ArrayList<Match> matchList = dbHelper.getAllMatches();
+        MatchAdapter adapter = new MatchAdapter(this, matchList);
+        listView.setAdapter(adapter);
 
-            resultText.append("플레이어: ").append(name)
-                    .append(" (").append(character).append(")\n")
-                    .append("결과: ").append(result).append("\n")
-                    .append("시간: ").append(dateTime).append("\n\n");
-        }
 
-        txtHistory.setText(resultText.toString());
-
-        // 뒤로가기 버튼
-        btnBack.setOnClickListener(v -> finish());
     }
 }
