@@ -7,13 +7,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
+
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 
@@ -28,13 +28,14 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isPaused=false;
 
-    private AlertDialog waitingDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        int player1Icon = getIntent().getIntExtra("player1Icon", R.drawable.icon1);
+        int player2Icon = getIntent().getIntExtra("player2Icon", R.drawable.icon2);
 
 
         for (int i = 0; i < 9; i++) {
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
         board[index] = playerX ? 1 : 2;
 
         // 버튼에 X 또는 O 표시
-        buttons[index].setText(playerX ? "X" : "O");
+        buttons[index].setText(playerX ? "" : "O");
 
         // 색상 설정: X - 코랄핑크, O - 민트색
         buttons[index].setTextColor(Color.parseColor(playerX ? "#FF8A80" : "#4DD0E1"));

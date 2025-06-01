@@ -17,6 +17,7 @@ public class MenuActivity extends AppCompatActivity {
         // 버튼 연결
         Button startButton = findViewById(R.id.btn_gameStart);
         Button btnRecord = findViewById(R.id.btn_record);
+        Button btn_custom =findViewById(R.id.btn_custom);
 
 
         // 클릭 시 MainActivity로 이동
@@ -27,6 +28,10 @@ public class MenuActivity extends AppCompatActivity {
 
         btnRecord.setOnClickListener(v -> {
             Intent intent = new Intent(this, RecordActivity.class);
+            startActivity(intent);
+        });
+        btn_custom.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CustomizeActivity.class);
             startActivity(intent);
         });
 
