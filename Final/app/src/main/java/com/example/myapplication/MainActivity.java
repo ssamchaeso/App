@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,15 +28,15 @@ public class MainActivity extends AppCompatActivity {
 
     int player1Icon;  // 전역변수로 선언
     int player2Icon;  // 전역변수로 선언
-
+    String player1Name,player2Name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         // CustomizeActivity에서 리소스값 받아오기
-        String player1Name = getIntent().getStringExtra("player1Name");
-        String player2Name = getIntent().getStringExtra("player2Name");
+        player1Name = getIntent().getStringExtra("player1Name");
+        player2Name = getIntent().getStringExtra("player2Name");
         player1Icon = getIntent().getIntExtra("player1Icon", R.drawable.icon1);
         player2Icon = getIntent().getIntExtra("player2Icon", R.drawable.icon2);
 
@@ -106,18 +107,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showResultDialog(int winnerPlayer) {
-        if (isFinishing()) return;
-        Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.game_result);
-        dialog.setCancelable(false);
+        resultDialog = new Dialog(this); // 전역 변수에 할당
+        resultDialog.setContentView(R.layout.game_result);
+        resultDialog.setCancelable(false);
 
-
-        TextView textResult =dialog.findViewById(R.id.text_result);
-        ImageView imageResult = dialog.findViewById(R.id.image_result);
-        Button btnRestart = dialog.findViewById(R.id.btn_restart);
-        Button btnExit = dialog.findViewById(R.id.btn_exit);
-
-
+        TextView textResult = resultDialog.findViewById(R.id.text_result);
+        ImageView imageResult = resultDialog.findViewById(R.id.image_result);
+        Button btnRestart = resultDialog.findViewById(R.id.btn_restart);
+        Button btnExit = resultDialog.findViewById(R.id.btn_exit);
 
         String player1Name = getIntent().getStringExtra("player1Name");
         String player2Name = getIntent().getStringExtra("player2Name");
@@ -137,32 +134,23 @@ public class MainActivity extends AppCompatActivity {
 
         btnRestart.setOnClickListener(v -> {
             resetGame();
-            dialog.dismiss();
+            resultDialog.dismiss();
         });
 
         btnExit.setOnClickListener(v -> {
-                resultDialog.dismiss();
-                finish();
-                });
-        resultDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            resultDialog.dismiss();
+            finish();
+        });
+
+        Window window = resultDialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
         resultDialog.show();
     }
-    private void saveMatchResult(String p1Name, String p1Result, String p2Name, String p2Result) {
-        DBHelper dbHelper = new DBHelper(this);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put("player1", p1Name);
-        values.put("player1Result", p1Result);
-        values.put("player2", p2Name);
-        values.put("player2Result", p2Result);
-
-        db.insert("match_records", null, values);
-        db.close();
-    }
 
 
-    private void showPauseDialog() {
+        private void showPauseDialog() {
         isPaused = true;
 
         Dialog dialog = new Dialog(this);

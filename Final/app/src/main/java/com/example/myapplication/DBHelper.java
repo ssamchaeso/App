@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -37,11 +38,12 @@ public class DBHelper extends SQLiteOpenHelper {
         values.put("player2", p2);
         values.put("player2Result", p2Result);
         db.insert("match_records", null, values);
+
     }
     public ArrayList<Match> getAllMatches() {
         ArrayList<Match> matchList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM match_records", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM match_records order by player1 ASC,player1Result ASC ", null);
 
         if (cursor.moveToFirst()) {
             do {

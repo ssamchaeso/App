@@ -101,13 +101,6 @@
         </LinearLayout>
 
         <!-- 확인 버튼 -->
-        <Button
-            android:id="@+id/confirmButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="확인"
-            android:layout_marginTop="48dp"
-            android:layout_marginBottom="32dp" />
 
         <EditText
             android:id="@+id/player2_name"
@@ -116,5 +109,13 @@
             android:ems="10"
             android:inputType="text"
             android:hint="Player2의 이름을 입력하세요" />
+
+        <Button
+            android:id="@+id/confirmButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="32dp"
+            android:text="확인" />
     </LinearLayout>
 </ScrollView>
