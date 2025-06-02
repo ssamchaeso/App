@@ -23,15 +23,20 @@ public class RecordActivity extends AppCompatActivity {
         listView = findViewById(R.id.matchListView);
         dbHelper = new DBHelper(this);
 
-        loadData(); // 데이터 로딩
+        loadData();
 
         Button backButton = findViewById(R.id.btn_history_back); // 뒤로가기 버튼 처리
         backButton.setOnClickListener(v -> finish());
+        Button deleteEmptyBtn = findViewById(R.id.btn_reset);
+        deleteEmptyBtn.setOnClickListener(v -> {
+            dbHelper.reset();
+            loadData();
+        });
     }
 
     private void loadData() {
-        matchList = dbHelper.getAllMatches(); // 전역 변수에 할당
-        adapter = new MatchAdapter(this, matchList); // 전역 변수에 할당
+        matchList = dbHelper.getAllMatches();
+        adapter = new MatchAdapter(this, matchList);
         listView.setAdapter(adapter);
     }
 }

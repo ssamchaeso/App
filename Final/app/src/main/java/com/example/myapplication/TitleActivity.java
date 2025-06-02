@@ -24,7 +24,7 @@ public class TitleActivity extends AppCompatActivity {
                     // 터치되면 게임 화면으로 전환
                     Intent intent = new Intent(TitleActivity.this,MenuActivity.class);
                     startActivity(intent);
-                    finish(); // 타이틀 화면 종료
+                    finish();
                     return true;
                 }
                 return false;

@@ -1,5 +1,5 @@
 package com.example.myapplication;
-
+//Match클래스는 데이터 모델 역할
 public class Match {
     public String player1;
     public String player1Result;

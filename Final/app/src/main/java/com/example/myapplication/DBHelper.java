@@ -5,7 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+
 
 import java.util.ArrayList;
 
@@ -22,7 +22,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "player1 TEXT, " +
                 "player1Result TEXT, " +
                 "player2 TEXT, " +
-                "player2Result TEXT);");  // ← 필드명도 일치시킴
+                "player2Result TEXT);");
     }
 
     @Override
@@ -30,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS match_records");
         onCreate(db);
     }
+    //경기 결과 저장
     public void insertMatch(String p1, String p1Result, String p2, String p2Result) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -40,10 +41,11 @@ public class DBHelper extends SQLiteOpenHelper {
         db.insert("match_records", null, values);
 
     }
+    //경기 기록 보여주기
     public ArrayList<Match> getAllMatches() {
         ArrayList<Match> matchList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT * FROM match_records order by player1 ASC,player1Result ASC ", null);
+        Cursor cursor = db.rawQuery("SELECT * FROM match_records  order by player1 ASC,player1Result ASC,_id DESC ", null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -59,5 +61,10 @@ public class DBHelper extends SQLiteOpenHelper {
         cursor.close();
         return matchList;
     }
+    //경기기록삭제
+    public void reset() {
+        SQLiteDatabase db=this.getWritableDatabase();
+        db.delete("match_records",null,null);
 
+    }
 }

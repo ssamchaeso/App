@@ -29,13 +29,27 @@
             android:layout_height="wrap_content" />
     </ScrollView>
 
-    <Button
-        android:id="@+id/btn_history_back"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="뒤로가기"
-        android:layout_marginTop="12dp"
-        android:backgroundTint="#4DD0E1"
-        android:textColor="#FFFFFF" />
+        android:layout_height="47dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_reset"
+            android:layout_width="218dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:backgroundTint="#4DD0E1"
+            android:text="초기화" />
+
+        <Button
+            android:id="@+id/btn_history_back"
+            android:layout_width="182dp"
+            android:layout_height="47dp"
+
+            android:backgroundTint="#4DD0E1"
+            android:text="뒤로가기"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 
 </LinearLayout>

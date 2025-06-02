@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -26,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private Dialog resultDialog;
     boolean isPaused = false;
 
-    int player1Icon;  // 전역변수로 선언
-    int player2Icon;  // 전역변수로 선언
+    int player1Icon;
+    int player2Icon;
     String player1Name,player2Name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +60,16 @@ public class MainActivity extends AppCompatActivity {
 
         board[index] = playerX ? 1 : 2;
 
-        // 아이콘으로 표시 (텍스트 지우기)
+
         buttons[index].setBackgroundResource(playerX ? player1Icon : player2Icon);
         buttons[index].setText("");
 
         if (checkWin()) {
             MediaPlayer.create(this, R.raw.win).start();
-            showResultDialog(playerX ? 1 : 2);  // playerX면 Player1 승리
+            showResultDialog(playerX ? 1 : 2);
         } else if (isDraw()) {
             MediaPlayer.create(this, R.raw.draw).start();
-            showResultDialog(0);  // 0은 무승부
+            showResultDialog(0);
         } else {
             playerX = !playerX;
         }
@@ -97,45 +98,64 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private void resetGame() {
-        Arrays.fill(board, 0);
-        for (Button b : buttons) {
-            b.setText("");
-            b.setBackgroundResource(0);  // 배경 제거(아이콘 초기화)
-        }
-        playerX = true;
-    }
-
     private void showResultDialog(int winnerPlayer) {
-        resultDialog = new Dialog(this); // 전역 변수에 할당
+        resultDialog = new Dialog(this);
         resultDialog.setContentView(R.layout.game_result);
         resultDialog.setCancelable(false);
 
+
         TextView textResult = resultDialog.findViewById(R.id.text_result);
         ImageView imageResult = resultDialog.findViewById(R.id.image_result);
-        Button btnRestart = resultDialog.findViewById(R.id.btn_restart);
         Button btnExit = resultDialog.findViewById(R.id.btn_exit);
 
-        String player1Name = getIntent().getStringExtra("player1Name");
-        String player2Name = getIntent().getStringExtra("player2Name");
+        boolean isCustomNames =
+                        player1Name != null && !player1Name.trim().isEmpty() &&
+                        player2Name != null && !player2Name.trim().isEmpty();
 
-        DBHelper dbHelper = new DBHelper(this);
+        if (player1Name == null || player1Name.trim().isEmpty()) {
+            player1Name = "플레이어 1";
+        }
+        if (player2Name == null || player2Name.trim().isEmpty()) {
+            player2Name = "플레이어 2";
+        }
+        if (player1Icon == 0) {
+            player1Icon = R.drawable.icon1;
+        }
+        if (player2Icon == 0) {
+            player2Icon = R.drawable.icon2;
+        }
         if (winnerPlayer == 1) {
-            dbHelper.insertMatch(player1Name, "Win", player2Name, "Lose");
+            textResult.setText(player1Name + " 승리!");
             imageResult.setImageResource(player1Icon);
         } else if (winnerPlayer == 2) {
-            dbHelper.insertMatch(player1Name, "Lose", player2Name, "Win");
+            textResult.setText(player2Name + " 승리!");
             imageResult.setImageResource(player2Icon);
         } else {
-            dbHelper.insertMatch(player1Name, "Draw", player2Name, "Draw");
+            textResult.setText("무승부");
             imageResult.setImageResource(R.drawable.draw_icon);
-            textResult.setVisibility(TextView.GONE);
         }
 
-        btnRestart.setOnClickListener(v -> {
-            resetGame();
-            resultDialog.dismiss();
-        });
+
+        if (isCustomNames) {
+
+            DBHelper dbHelper = new DBHelper(this);
+
+            if (winnerPlayer == 1) {
+                textResult.setText(player1Name + " 승리!");
+
+                dbHelper.insertMatch(player1Name, "Win", player2Name, "Lose");
+
+            } else if (winnerPlayer == 2) {
+                textResult.setText(player2Name + " 승리!");
+
+                dbHelper.insertMatch(player1Name, "Lose", player2Name, "Win");
+
+            } else {
+                textResult.setText("무승부");
+
+                dbHelper.insertMatch(player1Name, "Draw", player2Name, "Draw");
+            }
+        }
 
         btnExit.setOnClickListener(v -> {
             resultDialog.dismiss();
@@ -150,7 +170,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-        private void showPauseDialog() {
+
+    private void showPauseDialog() {
         isPaused = true;
 
         Dialog dialog = new Dialog(this);
@@ -168,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
         btnExit.setOnClickListener(v -> {
             dialog.dismiss(); // 먼저 dialog 닫기
-            finish();         // 그 다음 activity 종료
+            finish();         // 그 다음 activity 닫기
         });
         btnReturn.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, MenuActivity.class);
