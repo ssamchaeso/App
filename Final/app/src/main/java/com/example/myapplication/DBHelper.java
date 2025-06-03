@@ -24,7 +24,6 @@ public class DBHelper extends SQLiteOpenHelper {
                 "player2 TEXT, " +
                 "player2Result TEXT);");
     }
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS match_records");
